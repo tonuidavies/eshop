@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { Table, Form, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getUserDetails, updateUSerProfile } from '../actions/userActions'
+import { getUserDetails, updateUserProfile } from '../actions/userActions'
 import { listMyOrders } from '../actions/orderActions'
-import { USER_DETAILS_FAIL } from '../constants/userConstants'
+import { USER_DETAILS_FAIL, USER_UPDATE_PROFILE_RESET } from '../constants/userConstants'
 import { LinkContainer } from 'react-router-bootstrap'
 const ProfileScreen = ({ location, history }) => {
   const [name, setName] = useState('')
@@ -20,7 +19,7 @@ const ProfileScreen = ({ location, history }) => {
   const dispatch = useDispatch()
 
   const userDetails = useSelector((state) => state.userDetails)
-  const { loading, error, user} = userDetails
+  const { loading, error, user } = userDetails
 
   const userLogin = useSelector((state) => state.userLogin)
   const {userInfo} = userLogin
@@ -33,24 +32,24 @@ const ProfileScreen = ({ location, history }) => {
   useEffect(() => {
     if (!userInfo) {
       history.push('/login')
-    }else{
-        if(!user.name){
-            dispatch(getUserDetails('profile'))
-            dispatch(listMyOrders())
-        }else{
-            setName(user.name)
-            setEmail(user.email)
-        }
-
+    } else {
+      if (!user || !user.name || success) {
+        dispatch({ type: USER_UPDATE_PROFILE_RESET })
+        dispatch(getUserDetails())
+        dispatch(listMyOrders())
+      } else {
+        setName(user.name)
+        setEmail(user.email)
+      }
     }
-  }, [history, userInfo, user])
+  }, [dispatch, history, userInfo, user, success])
 
   const submitHandler = (e) => {
     e.preventDefault()
     if(password!==confirmPassword){
         setMessage('Passwords do not match')
     }else{
-        dispatch(updateUSerProfile({id:USER_DETAILS_FAIL, name, email, password, password}))
+        dispatch(updateUserProfile({id:USER_DETAILS_FAIL, name, email, password, password}))
 
     }
   }
