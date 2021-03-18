@@ -22,7 +22,7 @@ app.use(express.json())
 app.use('/api/products', productsRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/orders', orderRoutes)
-app.use('api/upload', uploadRoutes)
+app.use('/api/upload', uploadRoutes)
 
 
 app.get('/api/config/paypal', (req, res)=>res.send(process.env.PAYPAL_CLIENT_ID))
