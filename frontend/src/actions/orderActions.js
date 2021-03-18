@@ -14,7 +14,10 @@ import {
           ORDER_LIST_MY_FAIL,
           ORDERS_LIST_FAIL,
           ORDERS_LIST_SUCCESS,
-          ORDERS_LIST_REQUEST
+          ORDERS_LIST_REQUEST,
+          ORDER_DELIVER_FAIL,
+          ORDER_DELIVER_SUCCESS,
+          ORDER_DELIVER_REQUEST
         } from '../constants/orderConstants.js'
         import { logout } from './userActions'
 
@@ -139,6 +142,52 @@ import {
             })
           }
         }
+
+
+        export const deliverOrder = (order) => async (
+          dispatch,
+          getState
+        ) => {
+          try {
+            dispatch({
+              type: ORDER_DELIVER_REQUEST,
+            })
+        
+            const {
+              userLogin: { userInfo },
+            } = getState()
+        
+            const config = {
+              headers: {
+                Authorization: `Bearer ${userInfo.token}`,
+              },
+            }
+        
+            const { data } = await axios.put(
+              `/api/orders/${order._id}/deliver`,
+              {},
+              config
+            )
+        
+            dispatch({
+              type: ORDER_DELIVER_SUCCESS,
+              payload: data,
+            })
+          } catch (error) {
+            const message =
+              error.response && error.response.data.message
+                ? error.response.data.message
+                : error.message
+            if (message === 'Not authorized, token failed') {
+              dispatch(logout())
+            }
+            dispatch({
+              type: ORDER_DELIVER_FAIL,
+              payload: message,
+            })
+          }
+        }
+
 
 
         export const listMyOrders = () => async (dispatch, getState ) => {
