@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import { listProducts, deleteProduct, createProduct, updateProduct}  from '../actions/productActions'
+import { PRODUCT_CREATE_RESET } from '../constants/productConstants'
 
 
 
@@ -23,17 +24,20 @@ const productDelete = useSelector((state)=>state.productDelete)
 const{error:errorDelete, success:successDelete, loading:loadingDelete} = productDelete
 
 const productCreate = useSelector((state)=>state.productCreate)
-const{loading:loadingCreate, success:successCreate, product:createdProduct, error:errorCreate} = productCreate
+const{loading:loadingCreate,
+      success:successCreate,
+      product:createdProduct,
+      error:errorCreate} = productCreate
 
 
 
 
 
   useEffect(()=>{
+    dispatch({type: PRODUCT_CREATE_RESET})
 
       if(!userInfo.isAdmin){
         history.push('/login')
-
       }
       if(successCreate){
         history.push(`/admin/product/${createdProduct._id}/edit`)
@@ -77,6 +81,7 @@ const{loading:loadingCreate, success:successCreate, product:createdProduct, erro
     {errorDelete && <Message>{errorDelete}</Message>}
     {loadingCreate && <Loader />}
     {errorCreate && <Message>{errorCreate}</Message>}
+     
       {loading ? (
         <Loader />
       ) : error ? (
