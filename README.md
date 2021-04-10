@@ -52,4 +52,3 @@ to run either server or api please check package.json for scripts.
 This project is licensed under the MIT License 
 
 ## Acknowledgments
-Brad Traversy
